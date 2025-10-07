@@ -22,7 +22,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { usePosts } from '@/composables/usePosts';
-import PostCard from '@/components/PostCard.vue';
+import PostCard from '@/components/postCard.vue';
 
 const { posts, loadPosts } = usePosts();
 

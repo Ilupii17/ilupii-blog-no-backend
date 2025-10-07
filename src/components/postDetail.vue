@@ -14,7 +14,7 @@
     <!-- Container utama -->
     <div class="bg-gray-900 p-6 rounded-lg shadow-md">
       <!-- Prose + override style -->
-      <div class="prose prose-invert max-w-none markdown-content">
+      <div class="prose prose-invert max-w-none">
         <div v-html="renderedContent"></div>
       </div>
     </div>
@@ -23,12 +23,23 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-// Hapus 'marked', ganti dengan 'markdown-it'
-import MarkdownIt from 'markdown-it'; 
+import MarkdownIt from 'markdown-it';
 import { usePosts } from '@/composables/usePosts';
+import hljs from 'highlight.js';
 
-// Buat instance dari markdown-it
-const md = new MarkdownIt();
+const md = new MarkdownIt({
+    highlight: function (str, lang){
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return '<pre class="hljs"><code>' +
+               hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+               '</code></pre>';
+            } catch {
+                return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+            }
+        }
+    }
+});
 
 const props = defineProps(['slug']);
 const post = ref(null);
@@ -42,7 +53,6 @@ onMounted(async () => {
 
     if (postData && postData.content) {
       post.value = postData;
-      // Gunakan md.render() untuk mengonversi Markdown
       renderedContent.value = md.render(postData.content);
     }
   } catch (error) {
