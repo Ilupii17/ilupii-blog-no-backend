@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'prismjs/themes/prism-tomorrow.css';
+
+@layer base {
+  body {
+    @apply bg-[#232f40] text-white font-montserrat;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply text-gray-300 hover:text-white px-4 py-2 rounded-md transition;
+  }
+}
