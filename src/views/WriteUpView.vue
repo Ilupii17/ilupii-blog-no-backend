@@ -11,6 +11,7 @@
         :description="post.description"
         :slug="post.slug"
         :date="post.date"
+        :tags="post.tags"
       />
     </div>
   </div>

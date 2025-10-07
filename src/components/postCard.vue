@@ -5,6 +5,16 @@
     <div class="mt-2">
       <p class="text-gray-400 text-xs">{{ formatDate(date) }}</p>
       <p class="text-gray-300 mt-1 text-sm">{{ description }}</p>
+
+      <div v-if="tags && tags.length" class="mt-2 flex flex-wrap gap-1">
+        <span
+          v-for="tag in tags"
+          :key="tag"
+          class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded"
+        >
+          #{{ tag }}
+        </span>
+      </div>
     </div>
     <router-link :to="`/post/${slug}`" class="text-blue-400 hover:underline mt-3 inline-block">
       Read more →
@@ -15,7 +25,7 @@
 <script setup>
 import { computed } from 'vue';
 
-const props = defineProps(['title', 'description', 'slug', 'date']);
+const props = defineProps(['title', 'description', 'slug', 'date','tags']);
 
 // Fungsi format tanggal
 const formatDate = (dateString) => {

@@ -2,6 +2,7 @@
 title: Hello World!
 description: Ini adalah postingan pertamaku di blog sederhana ini
 date: 2025-01-10
+tags: [web,crypto,pwn]
 ---
 
 # Hello World!

@@ -15,7 +15,8 @@ export function usePosts() {
 
       let title = 'Untitled';
       let description = '';
-      let date = null; // Tambahin variable date
+      let date = null;
+      let tags = [];
       let contentWithoutFrontmatter = rawContent;
 
       // Cek apakah ada frontmatter
@@ -31,9 +32,15 @@ export function usePosts() {
             if (line.trim().startsWith('description:')) {
               description = line.replace('description:', '').trim().replace(/^["']|["']$/g, '');
             }
-            // Ambil date dari frontmatter
             if (line.trim().startsWith('date:')) {
               date = line.replace('date:', '').trim();
+            }
+            if (line.trim().startsWith('tags:')) {
+                try {
+                    tags = JSON.parse(line.replace('tags:','').trim())
+                } catch {
+                    tags = line.replace('tags:', '').trim().replace(/\[|\]/g, '').split(',').map(t => t.trim());
+                }
             }
           }
           contentWithoutFrontmatter = rawContent.slice(frontmatterEnd + 3).trim();
@@ -48,7 +55,8 @@ export function usePosts() {
         slug,
         title,
         description,
-        date, // Tambahin ke objek
+        date,
+        tags,
         content: rawContent,
         contentWithoutFrontmatter,
       });
