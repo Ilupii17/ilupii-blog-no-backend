@@ -6,27 +6,9 @@
         I'm a CTF player that currently plays with LastSeenIn2026, and my main category is pwn.
       </p>
     </section>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <PostCard
-        v-for="post in posts"
-        :key="post.slug"
-        :title="post.title"
-        :excerpt="post.excerpt"
-        :slug="post.slug"
-      />
-    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { usePosts } from '@/composables/usePosts';
-import PostCard from '@/components/postCard.vue';
-
-const { posts, loadPosts } = usePosts();
-
-onMounted(() => {
-  loadPosts();
-});
+// apa aja deh
 </script>

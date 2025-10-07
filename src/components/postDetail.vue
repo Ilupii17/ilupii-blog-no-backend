@@ -11,9 +11,7 @@
   <article v-else class="max-w-3xl mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold text-white mb-4">{{ post.title }}</h1>
 
-    <!-- Container utama -->
     <div class="bg-gray-900 p-6 rounded-lg shadow-md">
-      <!-- Prose + override style -->
       <div class="prose prose-invert max-w-none">
         <div v-html="renderedContent"></div>
       </div>
@@ -26,19 +24,22 @@ import { ref, onMounted } from 'vue';
 import MarkdownIt from 'markdown-it';
 import { usePosts } from '@/composables/usePosts';
 import hljs from 'highlight.js';
+// Tambahin import CSS theme
+import 'highlight.js/styles/github-dark.css';
 
 const md = new MarkdownIt({
-    highlight: function (str, lang){
-        if (lang && hljs.getLanguage(lang)) {
-            try {
-                return '<pre class="hljs"><code>' +
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return '<pre class="hljs"><code>' +
                hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
                '</code></pre>';
-            } catch {
-                return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-            }
-        }
+      } catch {
+        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+      }
     }
+    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+  }
 });
 
 const props = defineProps(['slug']);
@@ -51,9 +52,10 @@ onMounted(async () => {
     const { findPostBySlug } = usePosts();
     const postData = await findPostBySlug(props.slug);
 
-    if (postData && postData.content) {
+    // Ganti postData.content jadi postData.contentWithoutFrontmatter
+    if (postData && postData.contentWithoutFrontmatter) {
       post.value = postData;
-      renderedContent.value = md.render(postData.content);
+      renderedContent.value = md.render(postData.contentWithoutFrontmatter);
     }
   } catch (error) {
     console.error('Gagal memuat atau merender post:', error);
@@ -93,8 +95,13 @@ onMounted(async () => {
   @apply mb-2;
 }
 
-.markdown-content :deep(pre) {
-  @apply bg-gray-800 p-4 rounded-md overflow-x-auto my-4;
+/* Ganti style pre & code buat highlight.js */
+.markdown-content :deep(.hljs) {
+  @apply bg-gray-800 p-4 rounded-md overflow-x-auto my-4 !important;
+}
+
+.markdown-content :deep(.hljs code) {
+  @apply p-0 !important;
 }
 
 .markdown-content :deep(code) {

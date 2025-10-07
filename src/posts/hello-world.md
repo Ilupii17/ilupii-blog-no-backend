@@ -1,3 +1,8 @@
+---
+title: Hello World!
+description: Ini adalah postingan pertamaku di blog sederhana ini.as
+---
+
 # Hello World!
 
 Ini adalah postingan pertamaku di blog sederhana ini.

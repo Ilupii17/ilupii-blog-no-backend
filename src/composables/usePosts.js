@@ -1,4 +1,3 @@
-// src/composables/usePosts.js
 import { ref } from 'vue';
 
 const posts = ref([]);
@@ -11,13 +10,44 @@ export function usePosts() {
     const postList = [];
 
     for (const path in modules) {
-      const content = await modules[path]();
+      const rawContent = await modules[path]();
       const slug = path.replace('/src/posts/', '').replace('.md', '');
-      const lines = content.split('\n');
-      const title = lines.find(line => line.startsWith('# '))?.replace('# ', '') || 'Untitled';
-      const excerpt = content.substring(0, 100) + '...';
 
-      postList.push({ slug, title, excerpt, content });
+      let title = 'Untitled';
+      let description = '';
+      let contentWithoutFrontmatter = rawContent; // Default: seluruh isi
+
+      // Cek apakah ada frontmatter
+      if (rawContent.startsWith('---')) {
+        const frontmatterEnd = rawContent.indexOf('---', 3);
+        if (frontmatterEnd > -1) {
+          const frontmatter = rawContent.slice(3, frontmatterEnd);
+          const lines = frontmatter.split('\n');
+          for (const line of lines) {
+            if (line.trim().startsWith('title:')) {
+              title = line.replace('title:', '').trim().replace(/^["']|["']$/g, '');
+            }
+            if (line.trim().startsWith('description:')) {
+              description = line.replace('description:', '').trim().replace(/^["']|["']$/g, '');
+            }
+          }
+          // Ambil konten setelah frontmatter
+          contentWithoutFrontmatter = rawContent.slice(frontmatterEnd + 3).trim();
+        }
+      }
+
+      // Kalau description kosong, ambil dari awal konten
+      if (!description) {
+        description = contentWithoutFrontmatter.substring(0, 100) + '...';
+      }
+
+      postList.push({
+        slug,
+        title,
+        description,
+        content: rawContent, // Ini buat nanti di PostDetail.vue
+        contentWithoutFrontmatter, // Ini buat render di PostDetail.vue
+      });
     }
 
     posts.value = postList;
