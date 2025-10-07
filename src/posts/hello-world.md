@@ -1,6 +1,7 @@
 ---
 title: Hello World!
-description: Ini adalah postingan pertamaku di blog sederhana ini.as
+description: Ini adalah postingan pertamaku di blog sederhana ini
+date: 2025-01-10
 ---
 
 # Hello World!

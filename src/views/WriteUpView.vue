@@ -10,6 +10,7 @@
         :title="post.title"
         :description="post.description"
         :slug="post.slug"
+        :date="post.date"
       />
     </div>
   </div>

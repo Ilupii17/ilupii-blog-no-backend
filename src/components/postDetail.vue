@@ -8,10 +8,10 @@
     <router-link to="/" class="text-blue-400 hover:underline">← Back to Home</router-link>
   </div>
 
-  <article v-else class="max-w-3xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-white mb-4">{{ post.title }}</h1>
+  <article v-else class="max-w-4xl mx-auto px-4 py-8">
+    <!-- <h1 class="text-3xl font-bold text-white mb-4">{{ post.title }}</h1> -->
 
-    <div class="bg-gray-900 p-6 rounded-lg shadow-md">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
       <div class="prose prose-invert max-w-none">
         <div v-html="renderedContent"></div>
       </div>

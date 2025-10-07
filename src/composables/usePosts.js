@@ -15,7 +15,8 @@ export function usePosts() {
 
       let title = 'Untitled';
       let description = '';
-      let contentWithoutFrontmatter = rawContent; // Default: seluruh isi
+      let date = null; // Tambahin variable date
+      let contentWithoutFrontmatter = rawContent;
 
       // Cek apakah ada frontmatter
       if (rawContent.startsWith('---')) {
@@ -30,13 +31,15 @@ export function usePosts() {
             if (line.trim().startsWith('description:')) {
               description = line.replace('description:', '').trim().replace(/^["']|["']$/g, '');
             }
+            // Ambil date dari frontmatter
+            if (line.trim().startsWith('date:')) {
+              date = line.replace('date:', '').trim();
+            }
           }
-          // Ambil konten setelah frontmatter
           contentWithoutFrontmatter = rawContent.slice(frontmatterEnd + 3).trim();
         }
       }
 
-      // Kalau description kosong, ambil dari awal konten
       if (!description) {
         description = contentWithoutFrontmatter.substring(0, 100) + '...';
       }
@@ -45,8 +48,9 @@ export function usePosts() {
         slug,
         title,
         description,
-        content: rawContent, // Ini buat nanti di PostDetail.vue
-        contentWithoutFrontmatter, // Ini buat render di PostDetail.vue
+        date, // Tambahin ke objek
+        content: rawContent,
+        contentWithoutFrontmatter,
       });
     }
 
