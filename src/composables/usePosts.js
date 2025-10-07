@@ -6,11 +6,13 @@ export function usePosts() {
   const loadPosts = async () => {
     if (posts.value.length) return posts.value;
 
-    const modules = import.meta.glob('/src/posts/*.md', { as: 'raw' });
+    const modules = import.meta.glob('/src/posts/*.md', { query: '?raw' });
     const postList = [];
 
     for (const path in modules) {
-      const rawContent = await modules[path]();
+      const module = await modules[path]();
+      const rawContent = module.default;
+
       const slug = path.replace('/src/posts/', '').replace('.md', '');
 
       let title = 'Untitled';
@@ -19,7 +21,6 @@ export function usePosts() {
       let tags = [];
       let contentWithoutFrontmatter = rawContent;
 
-      // Cek apakah ada frontmatter
       if (rawContent.startsWith('---')) {
         const frontmatterEnd = rawContent.indexOf('---', 3);
         if (frontmatterEnd > -1) {
@@ -36,11 +37,11 @@ export function usePosts() {
               date = line.replace('date:', '').trim();
             }
             if (line.trim().startsWith('tags:')) {
-                try {
-                    tags = JSON.parse(line.replace('tags:','').trim())
-                } catch {
-                    tags = line.replace('tags:', '').trim().replace(/\[|\]/g, '').split(',').map(t => t.trim());
-                }
+              try {
+                tags = JSON.parse(line.replace('tags:', '').trim());
+              } catch {
+                tags = line.replace('tags:', '').trim().replace(/\[|\]/g, '').split(',').map(t => t.trim());
+              }
             }
           }
           contentWithoutFrontmatter = rawContent.slice(frontmatterEnd + 3).trim();
