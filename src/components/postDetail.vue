@@ -9,6 +9,12 @@
   </div>
 
   <article v-else class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-6">
+        <router-link to="/writeup" class="text-blue-300 hover:underline flex items-center">
+            <- back to writeup
+        </router-link>
+    </div>
+
     <!-- <h1 class="text-3xl font-bold text-white mb-4">{{ post.title }}</h1> -->
 
     <div class="bg-gray-800 p-6 rounded-lg shadow-md">
