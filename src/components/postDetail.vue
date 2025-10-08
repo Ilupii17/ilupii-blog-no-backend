@@ -202,10 +202,48 @@
       </div>
     </div>
   </Transition>
+
+  <!-- Image Lightbox -->
+  <Transition name="lightbox">
+    <div 
+      v-if="showLightbox" 
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-4"
+      @click="closeLightbox"
+    >
+      <!-- Close button -->
+      <button
+        @click="closeLightbox"
+        class="absolute top-4 right-4 z-10 p-3 bg-gray-800/80 hover:bg-gray-700 text-white rounded-full transition-all duration-300 hover:scale-110 group"
+        aria-label="Close lightbox"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Image container -->
+      <div class="relative max-w-7xl max-h-full" @click.stop>
+        <img 
+          :src="lightboxImage?.src" 
+          :alt="lightboxImage?.alt" 
+          class="max-w-full max-h-[90vh] w-auto h-auto rounded-lg shadow-2xl object-contain"
+          @click.stop
+        />
+        <p v-if="lightboxImage?.alt" class="text-center text-gray-400 mt-4 text-sm">
+          {{ lightboxImage.alt }}
+        </p>
+      </div>
+
+      <!-- Hint text -->
+      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-gray-400 text-sm">
+        Click anywhere to close
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import MarkdownIt from 'markdown-it';
 import { usePosts } from '@/composables/usePosts';
 import hljs from 'highlight.js';
@@ -236,6 +274,8 @@ const activeId = ref('');
 const showToc = ref(false);
 const showScrollTop = ref(false);
 const headingElements = ref({});
+const lightboxImage = ref(null);
+const showLightbox = ref(false);
 
 const isDesktop = computed(() => {
   return window.innerWidth >= 1024;
@@ -343,6 +383,34 @@ const scrollToTop = () => {
   });
 };
 
+const openLightbox = (src, alt) => {
+  lightboxImage.value = { src, alt };
+  showLightbox.value = true;
+  document.body.style.overflow = 'hidden';
+};
+
+const closeLightbox = () => {
+  showLightbox.value = false;
+  lightboxImage.value = null;
+  document.body.style.overflow = 'auto';
+};
+
+const setupImageClickHandlers = () => {
+  setTimeout(() => {
+    const images = document.querySelectorAll('.markdown-content img');
+    console.log('Found images:', images.length); // Debug
+    images?.forEach(img => {
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Image clicked:', img.src); // Debug
+        openLightbox(img.src, img.alt);
+      });
+    });
+  }, 300);
+};
+
 onMounted(async () => {
   try {
     const { findPostBySlug } = usePosts();
@@ -352,6 +420,11 @@ onMounted(async () => {
       post.value = postData;
       const rawHtml = md.render(postData.contentWithoutFrontmatter);
       toc.value = generateToc(rawHtml);
+      
+      // Wait for next tick to ensure DOM is updated
+      await nextTick();
+      setupImageClickHandlers();
+      
       window.addEventListener('scroll', onScroll);
     }
   } catch (error) {
@@ -363,6 +436,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll);
+  document.body.style.overflow = 'auto';
 });
 </script>
 
@@ -395,6 +469,30 @@ onUnmounted(() => {
 .slide-fade-leave-to {
   opacity: 0;
   transform: translateY(-5px);
+}
+
+/* Lightbox Transition */
+.lightbox-enter-active,
+.lightbox-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.lightbox-enter-from,
+.lightbox-leave-to {
+  opacity: 0;
+}
+
+.lightbox-enter-active img,
+.lightbox-leave-active img {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lightbox-enter-from img {
+  transform: scale(0.8);
+}
+
+.lightbox-leave-to img {
+  transform: scale(0.9);
 }
 
 /* Custom scrollbar for TOC */
@@ -496,7 +594,7 @@ nav::-webkit-scrollbar-thumb:hover {
 }
 
 .markdown-content :deep(img) {
-  @apply max-w-full h-auto rounded-xl my-6 shadow-lg border border-gray-700/50;
+  @apply max-w-full h-auto rounded-xl my-6 shadow-lg border border-gray-700/50 cursor-zoom-in hover:opacity-90 transition-opacity duration-300;
 }
 
 .markdown-content :deep(hr) {
