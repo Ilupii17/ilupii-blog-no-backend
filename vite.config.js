@@ -15,4 +15,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: { // <-- Tambahkan bagian ini
+    host: true, // Ini agar server bisa diakses dari network
+    allowedHosts: [
+      '33b565384aaa.ngrok-free.app' // <-- Tambahkan host ngrok Anda di sini
+    ]
+  }
+
 })
