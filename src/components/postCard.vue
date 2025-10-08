@@ -1,5 +1,6 @@
 <template>
   <Transition name="fade-card" appear>
+    <!-- Hapus @click dari sini -->
     <article
       class="
         group
@@ -16,11 +17,10 @@
         transition-all
         duration-300
         ease-out
-        cursor-pointer
+        cursor-pointer <!-- Gak masalah kalo tetep cursor-pointer, cuma buat UI -->
         overflow-hidden
         backdrop-blur-sm
       "
-      @click="navigateToPost"
     >
       <!-- Subtle gradient overlay on hover -->
       <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 transition-all duration-500 rounded-xl pointer-events-none"></div>
@@ -81,14 +81,19 @@
 
         <!-- Read more link with icon -->
         <div class="flex items-center justify-between pt-3 border-t border-gray-700/50 group-hover:border-gray-600 transition-colors duration-300">
-          <span class="text-sm text-blue-400 group-hover:text-blue-300 font-medium transition-colors duration-300">
+          <!-- Tambahin @click.prevent di sini -->
+          <span 
+            class="text-sm text-blue-400 group-hover:text-blue-300 font-medium transition-colors duration-300 cursor-pointer"
+            @click.prevent="navigateToPost"
+          >
             Read article
           </span>
           <svg 
-            class="w-5 h-5 text-blue-400 group-hover:text-blue-300 transform group-hover:translate-x-1 transition-all duration-300" 
+            class="w-5 h-5 text-blue-400 group-hover:text-blue-300 transform group-hover:translate-x-1 transition-all duration-300 cursor-pointer" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
+            @click.prevent="navigateToPost"
           >
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
@@ -137,6 +142,7 @@ const navigateToPost = () => {
   router.push(`/post/${props.slug}`);
 };
 </script>
+
 
 <style scoped>
 /* Fade-in card with improved animation */
