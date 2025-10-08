@@ -398,13 +398,13 @@ const closeLightbox = () => {
 const setupImageClickHandlers = () => {
   setTimeout(() => {
     const images = document.querySelectorAll('.markdown-content img');
-    console.log('Found images:', images.length); // Debug
+    // console.log('Found images:', images.length); // Debug
     images?.forEach(img => {
       img.style.cursor = 'zoom-in';
       img.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Image clicked:', img.src); // Debug
+        // console.log('Image clicked:', img.src); // Debug
         openLightbox(img.src, img.alt);
       });
     });

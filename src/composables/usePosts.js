@@ -1,3 +1,4 @@
+// src/composables/usePosts.js
 import { ref } from 'vue';
 
 const posts = ref([]);
@@ -12,7 +13,6 @@ export function usePosts() {
     for (const path in modules) {
       const module = await modules[path]();
       const rawContent = module.default;
-
       const slug = path.replace('/src/posts/', '').replace('.md', '');
 
       let title = 'Untitled';
@@ -63,6 +63,9 @@ export function usePosts() {
       });
     }
 
+    // Urutin dari yang terbaru dulu
+    postList.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
     posts.value = postList;
     return posts.value;
   };
@@ -72,5 +75,23 @@ export function usePosts() {
     return allPosts.find(post => post.slug === slug);
   };
 
-  return { posts, loadPosts, findPostBySlug };
+  // Fungsi baru: pagination
+  const getPaginatedPosts = async (page = 1, limit = 6) => {
+    const allPosts = await loadPosts();
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedPosts = allPosts.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(allPosts.length / limit);
+
+    return {
+      posts: paginatedPosts,
+      totalPages,
+      currentPage: page,
+      hasNext: page < totalPages,
+      hasPrev: page > 1,
+      totalPosts: allPosts.length,
+    };
+  };
+
+  return { posts, loadPosts, findPostBySlug, getPaginatedPosts };
 }
