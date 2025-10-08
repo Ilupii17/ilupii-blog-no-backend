@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-4 px-4 py-8">
+  <div class="container mx-auto px-4 py-8">
     <PostDetail :slug="$route.params.slug" />
   </div>
 </template>
